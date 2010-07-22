@@ -20,7 +20,7 @@ class HyperGraph
       request_path = "/#{requested_object_id}"
       
       query = build_query(options)   
-      request_path << "?#{query}" unless query==""
+      request_path << "?#{URI.escape(query)}" unless query==""
       
       http_response = http.get(request_path)
       data = extract_data(JSON.parse(http_response.body))
@@ -56,6 +56,10 @@ class HyperGraph
       request_path << "?#{build_query(:client_id => client_id, :client_secret => client_secret, :redirect_uri => redirect_uri, :code => code)}"
       http_response = http.get(request_path)
       http_response.body.split(/=|&/)[1]
+    end
+    
+    def search(query, options = {})
+      get('search', options.merge(:q => query))
     end
     
     protected
